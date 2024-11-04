@@ -2,6 +2,7 @@ package com.data.example.schema;
 
 import com.data.example.annotation.DefaultNumericValue;
 import com.data.example.annotation.PropertyType;
+import com.data.example.annotation.Tags;
 import com.data.example.annotation.Unit;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.types.NumberSchema;
@@ -11,6 +12,7 @@ class ExtendedNumberSchema extends NumberSchema {
     public String unit;
     public String propertyType;
     public double defaultValue;
+    public String[] tags;
 
     @Override
     public void enrichWithBeanProperty(BeanProperty beanProperty) {
@@ -29,6 +31,11 @@ class ExtendedNumberSchema extends NumberSchema {
         DefaultNumericValue defaultValue = beanProperty.getAnnotation(DefaultNumericValue.class);
         if (defaultValue != null) {
             this.defaultValue = defaultValue.value();
+        }
+
+        Tags tags = beanProperty.getAnnotation(Tags.class);
+        if (tags != null) {
+            this.tags = tags.value();
         }
 
         this.name = beanProperty.getName();

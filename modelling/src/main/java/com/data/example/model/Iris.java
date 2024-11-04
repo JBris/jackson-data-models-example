@@ -3,6 +3,7 @@ package com.data.example.model;
 import com.data.example.annotation.Unit;
 import com.data.example.annotation.DefaultNumericValue;
 import com.data.example.annotation.PropertyType;
+import com.data.example.annotation.Tags;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,6 +21,7 @@ public class Iris {
     @Min(0)
     @PropertyType("id")
     @DefaultNumericValue(0)
+    @Tags({ "example_tag", "another_tag" })
     public int id = 0;
 
     @JsonProperty(value = "sepal_length", index = 1)
@@ -30,6 +32,7 @@ public class Iris {
     @Unit("cm")
     @PropertyType("state_variable")
     @DefaultNumericValue(0)
+    @Tags({ "example_tag", "another_tag" })
     public double sepalLength = 0;
 
     @JsonProperty(value = "sepal_width", index = 2)
@@ -40,6 +43,7 @@ public class Iris {
     @Unit("cm")
     @PropertyType("state_variable")
     @DefaultNumericValue(0)
+    @Tags({ "example_tag", "another_tag" })
     public double sepalWidth = 0;
 
     @JsonProperty(value = "petal_length", index = 3)
@@ -50,6 +54,7 @@ public class Iris {
     @Unit("cm")
     @PropertyType("state_variable")
     @DefaultNumericValue(0)
+    @Tags({ "example_tag", "another_tag" })
     public double petalLength = 0;
 
     @JsonProperty(value = "petal_width", index = 4)
@@ -60,6 +65,7 @@ public class Iris {
     @Unit("cm")
     @PropertyType("state_variable")
     @DefaultNumericValue(0)
+    @Tags({ "example_tag", "another_tag" })
     public double petalWidth = 0;
 
     public Iris(

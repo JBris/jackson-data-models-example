@@ -33,7 +33,8 @@ JSON
       "minimum" : 0.0,
       "name" : "id",
       "propertyType" : "id",
-      "defaultValue" : 0.0
+      "defaultValue" : 0.0,
+      "tags" : [ "example_tag", "another_tag" ]
     },
     "sepal_length" : {
       "type" : "number",
@@ -44,7 +45,8 @@ JSON
       "name" : "sepal_length",
       "unit" : "cm",
       "propertyType" : "state_variable",
-      "defaultValue" : 0.0
+      "defaultValue" : 0.0,
+      "tags" : [ "example_tag", "another_tag" ]
     },
     "sepal_width" : {
       "type" : "number",
@@ -55,7 +57,8 @@ JSON
       "name" : "sepal_width",
       "unit" : "cm",
       "propertyType" : "state_variable",
-      "defaultValue" : 0.0
+      "defaultValue" : 0.0,
+      "tags" : [ "example_tag", "another_tag" ]
     },
     "petal_length" : {
       "type" : "number",
@@ -66,7 +69,8 @@ JSON
       "name" : "petal_length",
       "unit" : "cm",
       "propertyType" : "state_variable",
-      "defaultValue" : 0.0
+      "defaultValue" : 0.0,
+      "tags" : [ "example_tag", "another_tag" ]
     },
     "petal_width" : {
       "type" : "number",
@@ -77,7 +81,8 @@ JSON
       "name" : "petal_width",
       "unit" : "cm",
       "propertyType" : "state_variable",
-      "defaultValue" : 0.0
+      "defaultValue" : 0.0,
+      "tags" : [ "example_tag", "another_tag" ]
     }
   }
 }
