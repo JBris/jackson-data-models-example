@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @JacksonAnnotation
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Type {
-    String value();
+public @interface DefaultNumericValue {
+    double value();
 }

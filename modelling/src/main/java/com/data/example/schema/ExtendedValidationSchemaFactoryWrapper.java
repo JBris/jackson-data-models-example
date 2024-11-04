@@ -1,14 +1,13 @@
 package com.data.example.schema;
 
-import com.fasterxml.jackson.module.jsonSchema.jakarta.customProperties.ValidationSchemaFactoryWrapper;
-
 import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.factories.ObjectVisitor;
+import com.fasterxml.jackson.module.jsonSchema.jakarta.factories.ObjectVisitorDecorator;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.factories.SchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.factories.VisitorContext;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.factories.WrapperFactory;
@@ -16,13 +15,17 @@ import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ArraySchema;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.types.NumberSchema;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.types.StringSchema;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.factories.*;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.validation.AnnotationConstraintResolver;
 import com.fasterxml.jackson.module.jsonSchema.jakarta.validation.ValidationConstraintResolver;
 
-import com.data.example.annotation.Unit;
+// https://github.com/FasterXML/jackson-module-jsonSchema/blob/master/jakarta/src/main/java/com/fasterxml/jackson/module/jsonSchema/jakarta/customProperties/ValidationSchemaFactoryWrapper.java
 
-public class ExtendedValidationSchemaFactoryWrapper extends ValidationSchemaFactoryWrapper {
+/**
+ * @author cponomaryov
+ */
+public class ExtendedValidationSchemaFactoryWrapper extends SchemaFactoryWrapper {
+
+    private ValidationConstraintResolver constraintResolver;
 
     private static class ExtendedValidationSchemaFactoryWrapperFactory extends WrapperFactory {
         @Override
@@ -41,24 +44,58 @@ public class ExtendedValidationSchemaFactoryWrapper extends ValidationSchemaFact
         }
     }
 
-    protected JsonSchema addValidationConstraints(JsonSchema schema, BeanProperty prop) {
-        schema = super.addValidationConstraints(schema, prop);
-        String description = schema.getDescription();
-        Unit unit = prop.getAnnotation(Unit.class);
+    public ExtendedValidationSchemaFactoryWrapper() {
+        this(new AnnotationConstraintResolver());
+    }
 
-        if (unit != null) {
-            description += " (" + unit.value() + ")";
-        }
+    public ExtendedValidationSchemaFactoryWrapper(ValidationConstraintResolver constraintResolver) {
+        super(new ExtendedValidationSchemaFactoryWrapperFactory());
+        this.constraintResolver = constraintResolver;
+        this.schemaProvider = new ExtendedJsonSchemaFactory();
+    }
 
-        PropertyMetadata metadata = prop.getMetadata();
-        String defaultValue = metadata.getDefaultValue();
-        if (defaultValue != null) {
-            if (!defaultValue.endsWith(".")) {
-                description += ".";
+    @Override
+    public JsonObjectFormatVisitor expectObjectFormat(JavaType convertedType) {
+        return new ObjectVisitorDecorator((ObjectVisitor) super.expectObjectFormat(convertedType)) {
+            private JsonSchema getPropertySchema(BeanProperty writer) {
+                return ((ObjectSchema) getSchema()).getProperties().get(writer.getName());
             }
-            description += " Defaults to: " + defaultValue;
+
+            @Override
+            public void optionalProperty(BeanProperty writer) throws JsonMappingException {
+                super.optionalProperty(writer);
+                addValidationConstraints(getPropertySchema(writer), writer);
+            }
+
+            @Override
+            public void property(BeanProperty writer) throws JsonMappingException {
+                super.property(writer);
+                addValidationConstraints(getPropertySchema(writer), writer);
+            }
+        };
+    }
+
+    protected JsonSchema addValidationConstraints(JsonSchema schema, BeanProperty prop) {
+        {
+            Boolean required = constraintResolver.getRequired(prop);
+            if (required != null) {
+                schema.setRequired(required);
+            }
         }
-        schema.setDescription(description);
+        if (schema.isArraySchema()) {
+            ArraySchema arraySchema = schema.asArraySchema();
+            arraySchema.setMaxItems(constraintResolver.getArrayMaxItems(prop));
+            arraySchema.setMinItems(constraintResolver.getArrayMinItems(prop));
+        } else if (schema.isNumberSchema()) {
+            NumberSchema numberSchema = schema.asNumberSchema();
+            numberSchema.setMaximum(constraintResolver.getNumberMaximum(prop));
+            numberSchema.setMinimum(constraintResolver.getNumberMinimum(prop));
+        } else if (schema.isStringSchema()) {
+            StringSchema stringSchema = schema.asStringSchema();
+            stringSchema.setMaxLength(constraintResolver.getStringMaxLength(prop));
+            stringSchema.setMinLength(constraintResolver.getStringMinLength(prop));
+            stringSchema.setPattern(constraintResolver.getStringPattern(prop));
+        }
         return schema;
     }
 

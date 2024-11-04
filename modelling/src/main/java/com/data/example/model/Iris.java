@@ -1,7 +1,8 @@
 package com.data.example.model;
 
 import com.data.example.annotation.Unit;
-import com.data.example.annotation.Type;
+import com.data.example.annotation.DefaultNumericValue;
+import com.data.example.annotation.PropertyType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,47 +14,52 @@ import jakarta.validation.constraints.Max;
 @JsonRootName("iris")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Iris {
-    @JsonProperty(value = "id", index = 0, defaultValue = "0")
+    @JsonProperty(value = "id", index = 0)
     @JsonPropertyDescription("The unique identifier")
     @NotNull
     @Min(0)
-    @Type("id")
+    @PropertyType("id")
+    @DefaultNumericValue(0)
     public int id = 0;
 
-    @JsonProperty(value = "sepal_length", index = 1, defaultValue = "0")
+    @JsonProperty(value = "sepal_length", index = 1)
     @JsonPropertyDescription("The flower sepal length")
     @NotNull
     @Min(0)
     @Max(100)
     @Unit("cm")
-    @Type("state_variable")
+    @PropertyType("state_variable")
+    @DefaultNumericValue(0)
     public double sepalLength = 0;
 
-    @JsonProperty(value = "sepal_width", index = 2, defaultValue = "0")
+    @JsonProperty(value = "sepal_width", index = 2)
     @JsonPropertyDescription("The flower sepal width")
     @NotNull
     @Min(0)
     @Max(100)
     @Unit("cm")
-    @Type("state_variable")
+    @PropertyType("state_variable")
+    @DefaultNumericValue(0)
     public double sepalWidth = 0;
 
-    @JsonProperty(value = "petal_length", index = 3, defaultValue = "0")
+    @JsonProperty(value = "petal_length", index = 3)
     @JsonPropertyDescription("The flower petal length")
     @NotNull
     @Min(0)
     @Max(300)
     @Unit("cm")
-    @Type("state_variable")
+    @PropertyType("state_variable")
+    @DefaultNumericValue(0)
     public double petalLength = 0;
 
-    @JsonProperty(value = "petal_width", index = 4, defaultValue = "0")
+    @JsonProperty(value = "petal_width", index = 4)
     @JsonPropertyDescription("The flower petal width")
     @NotNull
     @Min(0)
     @Max(300)
     @Unit("cm")
-    @Type("state_variable")
+    @PropertyType("state_variable")
+    @DefaultNumericValue(0)
     public double petalWidth = 0;
 
     public Iris(
